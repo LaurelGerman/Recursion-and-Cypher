@@ -344,18 +344,22 @@ if __name__ == '__main__':
 #    print('Expected Output:', (24, 'hello'))
 #    print('Actual Output:', ciphertext.decrypt_message())
 
-    #TODO: WRITE YOUR TEST CASES HERE
-    orig = PlaintextMessage('Hello World!',2)
-    print(orig.get_message_text_encrypted())
-    orig.change_shift(7)
-    print(orig.get_message_text_encrypted())
-    
-    cyph = CiphertextMessage('Olssv, Dvysk!')
-    print(cyph.decrypt_message())
-    
+    #WRITE YOUR TEST CASES HERE
+# =============================================================================
+#     orig = PlaintextMessage('Hello World!',2)
+#     print(orig.get_message_text_encrypted())
+#     orig.change_shift(7)
+#     print(orig.get_message_text_encrypted())
+#     
+#     cyph = CiphertextMessage('Olssv, Dvysk!')
+#     print(cyph.decrypt_message())
+#     
+# =============================================================================
+    story_cyph = CiphertextMessage(get_story_string())
+    print(story_cyph.decrypt_message())
     
     
 
     #TODO: best shift value and unencrypted story 
     
-    pass #delete this line and replace with your code here
+
