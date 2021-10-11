@@ -22,19 +22,38 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
-
-    pass #delete this line and replace with your code here
+    
+    
+    #base case: permutation of a single letter, return that letter    
+    if(len(sequence) <= 1):
+        return [sequence]
+    
+    else:
+        list_to_return = []
+        
+        for l in range(len(sequence)): #say letter is 'a'
+            letter = sequence[l]
+            sub_sequence = sequence[slice(l)] + sequence[slice(l+1,len(sequence))]  #sub_sequence is 'bc'
+            sub_permutations = get_permutations(sub_sequence) #returns a list: ['bc', 'cb']
+            
+            for perm in sub_permutations:
+                this_perm = letter + perm
+                if(not(this_perm in list_to_return)):
+                    list_to_return.append(this_perm)
+            
+        return list_to_return
+            
+    
 
 if __name__ == '__main__':
 #    #EXAMPLE
-#    example_input = 'abc'
-#    print('Input:', example_input)
-#    print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
-#    print('Actual Output:', get_permutations(example_input))
+    example_input = 'aaa'
+    print('Input:', example_input)
+    #print('Expected Output:', ['abc', 'acb', 'bac', 'bca', 'cab', 'cba'])
+    print('Actual Output:', get_permutations(example_input))
     
 #    # Put three example test cases here (for your sanity, limit your inputs
 #    to be three characters or fewer as you will have n! permutations for a 
 #    sequence of length n)
 
-    pass #delete this line and replace with your code here
 
