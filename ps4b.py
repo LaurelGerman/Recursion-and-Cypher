@@ -92,6 +92,45 @@ class Message(object):
         '''
         return self.valid_words.copy()
 
+    def build_dict_piece(self, shift, alphabet, shift_dict):
+        '''
+        Helper function for build_shift_dict
+        
+        Parameters
+        ----------
+        shift (integer): the amount by which to shift every letter of the 
+        alphabet. -26 < shift < 26
+        
+        alphabet : alphabet string literal upon which to build the dictionary; 
+        will be string.ascii_lowercase or string.ascii_uppercase
+        
+        shift_dict : the dictionary into which to enter the values
+        
+        Returns: a dictionary mapping a letter (string) to 
+                 another letter (string). 
+        -------
+        None.
+
+        '''
+        assert isinstance(shift, int), "Shift is not an int"
+        assert -26 < shift < 26, "Shift must be between -26 and 26"
+        assert isinstance(alphabet, str), "Alphabet is not a string"
+        assert isinstance(shift_dict, dict), "shift_dict is not a dictionary"
+        
+        for c in range(len(alphabet)): #for every letter
+            if(shift >=0): #shift down in alphabet
+                if(c+shift<26): #if doesn't cause wraparound
+                    shift_dict[alphabet[c]] = alphabet[c+shift]
+                else: #if does cause wraparound
+                    shift_dict[alphabet[c]] = alphabet[c+shift-26]
+            else: #shift up in alphabet
+                if(c+shift >=0): #if doesn't cause wraparound
+                    shift_dict[alphabet[c]] = alphabet[c+shift]
+                else: #if does cause wraparound
+                    shift_dict[alphabet[c]] = alphabet[c+shift+26]
+        
+        return shift_dict        
+
     def build_shift_dict(self, shift):
         '''
         Creates a dictionary that can be used to apply a cipher to a letter.
@@ -101,32 +140,22 @@ class Message(object):
         letters only.        
         
         shift (integer): the amount by which to shift every letter of the 
-        alphabet. 0 <= shift < 26
+        alphabet. -26 < shift < 26
 
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
         
         assert isinstance(shift, int), "Shift is not an int"
-        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        assert -26 < shift < 26, "Shift must be between -26 and 26"
         
         shift_dict = {}
-
         
-        for lc in range(26):
-            if(lc+shift<26):
-                shift_dict[string.ascii_lowercase[lc]] = string.ascii_lowercase[lc+shift]
-            else:
-                shift_dict[string.ascii_lowercase[lc]] = string.ascii_lowercase[(lc+shift)-26]
-        
-        for uc in range(26):
-            if(uc+shift<26):
-                shift_dict[string.ascii_uppercase[uc]] = string.ascii_uppercase[uc+shift]
-            else:
-                shift_dict[string.ascii_uppercase[uc]] = string.ascii_uppercase[(uc+shift)-26]    
-        
+        shift_dict = self.build_dict_piece(shift, string.ascii_lowercase, shift_dict)
+        shift_dict = self.build_dict_piece(shift, string.ascii_uppercase, shift_dict)
+                
         return shift_dict
-
+    
     def apply_shift(self, shift):
         '''
         Applies the Caesar Cipher to self.message_text with the input shift.
@@ -141,7 +170,7 @@ class Message(object):
         '''
         
         assert isinstance(shift, int), "Shift is not an int"
-        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        assert -26 < shift < 26, "Shift must be between 0 and 26"
         
         shift_dict = self.build_shift_dict(shift)
         ciphertext = ''
@@ -239,17 +268,22 @@ class PlaintextMessage(Message):
 
 
 class CiphertextMessage(Message):
-    def __init__(self, text):
-        '''
-        Initializes a CiphertextMessage object
-                
-        text (string): the message's text
 
-        a CiphertextMessage object has two attributes:
-            self.message_text (string, determined by input text)
-            self.valid_words (list, determined using helper function load_words)
-        '''
-        pass #delete this line and replace with your code here
+# =============================================================================
+#     def __init__(self, text):
+#         '''
+#         Initializes a CiphertextMessage object
+#                 
+#         text (string): the message's text
+# 
+#         a CiphertextMessage object has two attributes:
+#             self.message_text (string, determined by input text)
+#             self.valid_words (list, determined using helper function load_words)
+#         '''
+#         pass
+# =============================================================================
+        
+
 
     def decrypt_message(self):
         '''
@@ -267,7 +301,36 @@ class CiphertextMessage(Message):
         Returns: a tuple of the best shift value used to decrypt the message
         and the decrypted message text using that shift value
         '''
-        pass #delete this line and replace with your code here
+        
+        valid_list = self.get_valid_words()
+        best_try = ''
+        best_score = 0
+        best_shift = 0
+        ties = []
+        
+        for s in range(0,-26,-1):
+            this_try = self.apply_shift(s)            
+            list_of_words = this_try.split(" ")
+            num_words = 0
+            
+            for word in list_of_words:
+                if(is_word(valid_list,word)):
+                    num_words +=1
+            
+            if(num_words > best_score):
+                best_shift = s
+                best_score = num_words
+                best_try = this_try
+                ties = []
+                
+            elif(num_words == best_score):
+                ties.append(s)
+        
+        if(len(ties) > 0):
+            print("Other options:",ties)
+            
+        return (best_shift,best_try)
+            
 
 if __name__ == '__main__':
 
@@ -286,6 +349,11 @@ if __name__ == '__main__':
     print(orig.get_message_text_encrypted())
     orig.change_shift(7)
     print(orig.get_message_text_encrypted())
+    
+    cyph = CiphertextMessage('Olssv, Dvysk!')
+    print(cyph.decrypt_message())
+    
+    
     
 
     #TODO: best shift value and unencrypted story 
