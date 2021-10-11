@@ -108,6 +108,8 @@ class Message(object):
         '''
         
         assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        
         shift_dict = {}
 
         
@@ -139,6 +141,7 @@ class Message(object):
         '''
         
         assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
         
         shift_dict = self.build_shift_dict(shift)
         ciphertext = ''
@@ -169,14 +172,13 @@ class PlaintextMessage(Message):
 
         '''
         assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
         assert isinstance(text, str), "Text is not a string"
         
         Message.__init__(self,text)
         self.shift = shift
-        self.encryption_dict = {}
-        self.message_text_encrypted = ''
-        
-        
+        self.encryption_dict = self.build_shift_dict(shift)
+        self.message_text_encrypted = self.apply_shift(shift)
 
     def get_shift(self):
         '''
@@ -184,7 +186,12 @@ class PlaintextMessage(Message):
         
         Returns: self.shift
         '''
-        pass #delete this line and replace with your code here
+        return self.shift
+    
+    def set_shift(self, shift):
+        assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        self.shift = shift
 
     def get_encryption_dict(self):
         '''
@@ -192,15 +199,25 @@ class PlaintextMessage(Message):
         
         Returns: a COPY of self.encryption_dict
         '''
-        pass #delete this line and replace with your code here
-
+        return self.encryption_dict.copy()
+    
+    def set_encryption_dict(self, shift):
+        assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        self.encryption_dict = self.build_shift_dict(shift)
+        
     def get_message_text_encrypted(self):
         '''
         Used to safely access self.message_text_encrypted outside of the class
         
         Returns: self.message_text_encrypted
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text_encrypted
+
+    def set_message_text_encrypted(self, shift):
+        assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        self.message_text_encrypted = self.apply_shift()
 
     def change_shift(self, shift):
         '''
@@ -212,7 +229,13 @@ class PlaintextMessage(Message):
 
         Returns: nothing
         '''
-        pass #delete this line and replace with your code here
+        assert isinstance(shift, int), "Shift is not an int"
+        assert 0 <= shift < 26, "Shift must be between 0 and 26"
+        
+        self.set_shift(shift)
+        self.set_encryption_dict(shift)
+        self.set_message_text_encrypted(shift)
+        
 
 
 class CiphertextMessage(Message):
