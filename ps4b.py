@@ -70,6 +70,8 @@ class Message(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
+        assert isinstance(text, str), "Text is not a string"
+        
         self.message_text = text
         self.valid_words = load_words(WORDLIST_FILENAME)
 
@@ -105,6 +107,7 @@ class Message(object):
                  another letter (string). 
         '''
         
+        assert isinstance(shift, int), "Shift is not an int"
         shift_dict = {}
 
         
@@ -135,6 +138,8 @@ class Message(object):
              down the alphabet by the input shift
         '''
         
+        assert isinstance(shift, int), "Shift is not an int"
+        
         shift_dict = self.build_shift_dict(shift)
         ciphertext = ''
         
@@ -163,7 +168,15 @@ class PlaintextMessage(Message):
             self.message_text_encrypted (string, created using shift)
 
         '''
-        pass #delete this line and replace with your code here
+        assert isinstance(shift, int), "Shift is not an int"
+        assert isinstance(text, str), "Text is not a string"
+        
+        Message.__init__(self,text)
+        self.shift = shift
+        self.encryption_dict = {}
+        self.message_text_encrypted = ''
+        
+        
 
     def get_shift(self):
         '''
