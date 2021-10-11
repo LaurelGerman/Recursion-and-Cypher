@@ -217,7 +217,7 @@ class PlaintextMessage(Message):
     def set_message_text_encrypted(self, shift):
         assert isinstance(shift, int), "Shift is not an int"
         assert 0 <= shift < 26, "Shift must be between 0 and 26"
-        self.message_text_encrypted = self.apply_shift()
+        self.message_text_encrypted = self.apply_shift(shift)
 
     def change_shift(self, shift):
         '''
@@ -282,8 +282,10 @@ if __name__ == '__main__':
 #    print('Actual Output:', ciphertext.decrypt_message())
 
     #TODO: WRITE YOUR TEST CASES HERE
-    orig = Message('Hello World!')
-    print(orig.apply_shift(2))
+    orig = PlaintextMessage('Hello World!',2)
+    print(orig.get_message_text_encrypted())
+    orig.change_shift(7)
+    print(orig.get_message_text_encrypted())
     
 
     #TODO: best shift value and unencrypted story 
